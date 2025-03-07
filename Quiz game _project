@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .options {
+            margin: 10px 0;
+        }
+
+        .options input {
+            margin-right: 10px;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .next-btn, .submit-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .next-btn:hover, .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .submit-btn {
+            display: none;
+        }
+
+        .score {
+            font-size: 1.5em;
+            color: #333;
+            text-align: center;
+        }
+
+        .reset-btn {
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .reset-btn:hover {
+            background-color: #e53935;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <h1>Quiz Game</h1>
+        <div id="question-container">
+            <div class="question" id="question">Question goes here</div>
+            <div class="options" id="options"></div>
+        </div>
+        <div class="buttons">
+            <button class="next-btn" onclick="nextQuestion()">Next</button>
+            <button class="submit-btn" onclick="submitQuiz()">Submit</button>
+        </div>
+        <div class="score" id="score"></div>
+        <button class="reset-btn" onclick="resetQuiz()">Restart Quiz</button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What is the capital of France?",
+                options: ["Berlin", "Madrid", "Paris", "Rome"],
+                answer: "Paris"
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Earth", "Mars", "Jupiter", "Saturn"],
+                answer: "Mars"
+            },
+            {
+                question: "Who wrote 'Romeo and Juliet'?",
+                options: ["William Shakespeare", "Charles Dickens", "Jane Austen", "Mark Twain"],
+                answer: "William Shakespeare"
+            },
+            {
+                question: "What is the largest ocean on Earth?",
+                options: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
+                answer: "Pacific Ocean"
+            },
+            {
+                question: "What is the square root of 64?",
+                options: ["6", "7", "8", "9"],
+                answer: "8"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        // Load the first question
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            document.getElementById('question').textContent = currentQuestion.question;
+
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = ''; // Clear previous options
+
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.innerHTML = `
+                    <input type="radio" name="option" value="${option}" id="option${index}">
+                    <label for="option${index}">${option}</label>
+                `;
+                optionsContainer.appendChild(optionElement);
+            });
+
+            document.querySelector('.next-btn').style.display = 'inline-block';
+            document.querySelector('.submit-btn').style.display = 'none';
+        }
+
+        // Go to the next question
+        function nextQuestion() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+
+            if (!selectedOption) {
+                alert('Please select an answer');
+                return;
+            }
+
+            const selectedAnswer = selectedOption.value;
+            userAnswers[currentQuestionIndex] = selectedAnswer;
+
+            if (selectedAnswer === questions[currentQuestionIndex].answer) {
+                score++;
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                document.querySelector('.next-btn').style.display = 'none';
+                document.querySelector('.submit-btn').style.display = 'inline-block';
+            }
+        }
+
+        // Submit the quiz and display the score
+        function submitQuiz() {
+            const result = `Your score is ${score} out of ${questions.length}.`;
+            document.getElementById('score').textContent = result;
+            document.querySelector('.reset-btn').style.display = 'block';
+        }
+
+        // Reset the quiz
+        function resetQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            document.getElementById('score').textContent = '';
+            document.querySelector('.reset-btn').style.display = 'none';
+            loadQuestion();
+        }
+
+        // Initialize the quiz by loading the first question
+        loadQuestion();
+
+    </script>
+
+</body>
+</html>
